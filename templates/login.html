@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medico Login</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="landing-page">
+
+<div class="auth-layout">
+
+<!-- LEFT SIDE -->
+<div class="auth-left">
+
+<div class="brand-badge">Medico</div>
+
+<h1>Your AI Health Companion</h1>
+
+<p>
+Track your BMI, check symptoms with AI, manage health goals,
+and stay consistent with your daily wellness routine.
+</p>
+
+<div class="feature-list">
+
+<div class="feature-item">
+<span class="feature-icon">🩺</span>
+<div>
+<h3>AI Symptom Checker</h3>
+<p>Get smart health guidance in a chatbot experience.</p>
+</div>
+</div>
+
+<div class="feature-item">
+<span class="feature-icon">📊</span>
+<div>
+<h3>BMI & Health Tracking</h3>
+<p>Store profile details and monitor your wellness.</p>
+</div>
+</div>
+
+<div class="feature-item">
+<span class="feature-icon">🎯</span>
+<div>
+<h3>Daily Goals & Rewards</h3>
+<p>Track medicine, exercise, and healthy habits.</p>
+</div>
+</div>
+
+</div>
+</div>
+
+
+<!-- RIGHT SIDE -->
+<div class="auth-right">
+
+<div class="auth-card modern-auth-card">
+
+<div class="auth-card-top">
+
+<div class="auth-logo-circle">M</div>
+
+<h2>Welcome Back</h2>
+
+<p>Login to continue your health journey</p>
+
+</div>
+
+
+<!-- FLASH MESSAGES -->
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div style="background:#ecfdf5;padding:10px;border-radius:10px;margin-bottom:15px;color:#065f46;">
+{% for msg in messages %}
+<p>{{ msg }}</p>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+
+<form method="POST">
+
+<label>Email Address</label>
+<input type="email" name="email" required>
+
+<label>Password</label>
+<input type="password" name="password" required>
+
+<button type="submit">Login</button>
+
+</form>
+
+<a href="{{ url_for('signup') }}" class="auth-link">
+Don't have an account? Create one
+</a>
+
+</div>
+</div>
+
+</div>
+
+</body>
+</html>

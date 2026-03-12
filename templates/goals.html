@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Goals - Medico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="form-page">
+
+<div class="form-card">
+    <h2>Daily Goals & Rewards</h2>
+    <p class="form-subtitle">Set medicine, exercise, water or any health activity goal</p>
+
+    <div class="reward-box">
+        <h3>Current Reward: {{ reward }}</h3>
+        <p>1 day = Silver Coin | 7 days = Gold Coin | 30 days = Diamond Coin</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('goals') }}">
+        <label>Goal Name</label>
+        <input type="text" name="title" placeholder="Example: Morning Medicine" required>
+
+        <label>Set Time (HH : MM : SS)</label>
+        <input type="time" name="goal_time" step="1" required>
+        <small class="time-hint">Example: 08:30:00 = 8:30 AM</small>
+        <label>Notification Email</label>
+<input type="email" name="notify_email" placeholder="Enter email for reminder" required>
+
+        <button type="submit" class="complete-btn">Add Goal</button>
+    </form>
+
+    <div class="goal-list">
+        {% for goal in goals %}
+        <div class="goal-item">
+            <div>
+                <strong>{{ goal.title }}</strong><br>
+                <span>Time: {{ goal.goal_time }}</span><br>
+
+                {% if goal.completed %}
+                    <span class="status-completed">Status: Completed</span>
+                {% elif goal.is_expired %}
+                    <span class="status-expired">Status: Expired</span>
+                {% else %}
+                    <span class="status-pending">Status: Pending</span>
+                {% endif %}
+            </div>
+
+            <div class="goal-actions">
+                {% if goal.completed %}
+                    <a href="{{ url_for('uncomplete_goal', goal_id=goal.id) }}" class="small-btn undo-btn">↺ Undo</a>
+                {% elif goal.is_expired %}
+                    <span class="small-btn expired-btn">Time Over</span>
+                {% else %}
+                    <a href="{{ url_for('complete_goal', goal_id=goal.id) }}" class="small-btn done-btn">✔ Complete</a>
+                {% endif %}
+
+                <a href="{{ url_for('delete_goal', goal_id=goal.id) }}" class="small-btn delete-goal-btn">Delete</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
+</div>
+
+</body>
+</html>

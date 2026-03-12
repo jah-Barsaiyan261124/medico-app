@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account - Medico</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="landing-page">
+
+<div class="auth-layout">
+
+<!-- LEFT SIDE -->
+
+<div class="auth-left">
+
+<div class="brand-badge">Medico</div>
+
+<h1>Create Your Medico Account</h1>
+
+<p>
+Join Medico to access AI-powered symptom analysis,
+BMI tracking, daily health goals, and wellness rewards.
+</p>
+
+<div class="feature-list">
+
+<div class="feature-item">
+<span class="feature-icon">💚</span>
+<div>
+<h3>Personal Health Dashboard</h3>
+<p>Manage your health profile and track progress.</p>
+</div>
+</div>
+
+<div class="feature-item">
+<span class="feature-icon">🤖</span>
+<div>
+<h3>AI Health Assistant</h3>
+<p>Understand symptoms with Medico AI.</p>
+</div>
+</div>
+
+<div class="feature-item">
+<span class="feature-icon">🏆</span>
+<div>
+<h3>Rewards & Goals</h3>
+<p>Stay consistent with healthy habits.</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- RIGHT SIDE -->
+
+<div class="auth-right">
+
+<div class="auth-card modern-auth-card">
+
+<div class="auth-card-top">
+
+<div class="auth-logo-circle">M</div>
+
+<h2>Create Account</h2>
+
+<p>Start your smart healthcare journey</p>
+
+</div>
+
+
+<!-- FLASH MESSAGES -->
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div style="background:#ecfdf5;padding:10px;border-radius:10px;margin-bottom:15px;color:#065f46;">
+{% for msg in messages %}
+<p>{{ msg }}</p>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+
+<form method="POST">
+
+<label>Full Name</label>
+<input type="text" name="name" required>
+
+<label>Email Address</label>
+<input type="email" name="email" required>
+
+<label>Password</label>
+<input type="password" name="password" required>
+
+<label>Confirm Password</label>
+<input type="password" name="confirm_password" required>
+
+<button type="submit">Create Account</button>
+
+</form>
+
+<a href="{{ url_for('login') }}" class="auth-link">
+Already have an account? Login
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

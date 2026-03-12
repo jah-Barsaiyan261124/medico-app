@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Contacts - Medico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="emergency-page">
+
+<div class="emergency-page-wrap">
+
+    <div class="emergency-topbar">
+        <div>
+            <div class="emergency-badge">Safety Feature</div>
+            <h1>Emergency Contacts</h1>
+            <p>Add trusted family members so Medico can alert them during an emergency.</p>
+        </div>
+
+        <div class="emergency-top-actions">
+            <a href="{{ url_for('dashboard') }}" class="emergency-back-btn">Back</a>
+        </div>
+    </div>
+
+    <div class="emergency-summary-card">
+        <div class="emergency-summary-left">
+            <h3>Quick Access</h3>
+            <strong>{{ contacts|length if contacts else 0 }}</strong>
+            <span>Saved Contacts</span>
+        </div>
+        <div class="emergency-summary-right">
+            Keep at least one trusted contact for emergency alerts.
+        </div>
+    </div>
+
+    <div class="emergency-main-grid">
+
+        <!-- Add Contact Form -->
+        <section class="emergency-panel">
+            <div class="emergency-panel-head">
+                <h2>Add New Contact</h2>
+                <span>Form</span>
+            </div>
+
+  <form method="POST" class="emergency-form-pro">
+    <div class="emergency-field">
+        <label for="name">Family Member Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter full name" required>
+    </div>
+
+    <div class="emergency-field">
+        <label for="email">Family Member Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter email address" required>
+    </div>
+
+    <div class="emergency-field">
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" name="phone" placeholder="Enter phone number">
+    </div>
+
+    <div class="emergency-field">
+        <label for="relation">Relation</label>
+        <input type="text" id="relation" name="relation" placeholder="Mother, Brother, Sister, Friend, etc.">
+    </div>
+
+    <button type="submit" class="emergency-submit-btn">+ Add Contact</button>
+</form>
+        </section>
+
+        <!-- Saved Contacts -->
+        <section class="emergency-panel">
+            <div class="emergency-panel-head">
+                <h2>Saved Contacts</h2>
+                <span>List</span>
+            </div>
+
+            {% if contacts %}
+                <div class="emergency-cards-grid">
+                    {% for contact in contacts %}
+                        <div class="emergency-contact-pro-card">
+                            <div class="emergency-contact-header">
+                                <div class="emergency-avatar-pro">
+                                    {{ contact.name[0]|upper }}
+                                </div>
+
+                                <div class="emergency-contact-details">
+                                    <h3>{{ contact.name }}</h3>
+                                    <p>{{ contact.email }}</p>
+                                    <small>{{ contact.relation or "Family Contact" }}</small>
+                                </div>
+                            </div>
+
+                            <div class="emergency-contact-footer">
+                                <a href="{{ url_for('delete_emergency_contact', contact_id=contact.id) }}"
+                                   class="emergency-delete-btn"
+                                   onclick="return confirm('Are you sure you want to delete this emergency contact?')">
+                                    Delete Contact
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="emergency-empty-state">
+                    <div class="emergency-empty-icon">📭</div>
+                    <h3>No contacts added yet</h3>
+                    <p>Add a family member email to use the emergency alert feature.</p>
+                </div>
+            {% endif %}
+        </section>
+
+    </div>
+
+</div>
+
+</body>
+</html>

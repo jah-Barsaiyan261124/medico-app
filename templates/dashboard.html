@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Medico</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="dashboard-v2-page">
+
+<div class="dashboard-v2-layout">
+
+<!-- Sidebar -->
+<aside class="dashboard-sidebar">
+
+<div>
+
+<div class="sidebar-brand">
+<div class="sidebar-logo">M</div>
+<div>
+<h2>Medico</h2>
+<p>AI Health Assistant</p>
+</div>
+</div>
+
+<nav class="sidebar-nav">
+
+<a href="{{ url_for('dashboard') }}" class="sidebar-link active">
+<span class="sidebar-icon">🏠</span>
+<span class="sidebar-text">Dashboard</span>
+</a>
+
+<a href="{{ url_for('bmi') }}" class="sidebar-link">
+<span class="sidebar-icon">📊</span>
+<span class="sidebar-text">BMI Tracker</span>
+</a>
+
+<a href="{{ url_for('symptom') }}" class="sidebar-link">
+<span class="sidebar-icon">💬</span>
+<span class="sidebar-text">Symptom Checker</span>
+</a>
+
+
+<a href="{{ url_for('report_analysis') }}" class="sidebar-link">
+<span class="sidebar-icon">📄</span>
+<span class="sidebar-text">AI Report Analysis</span>
+</a>
+
+<a href="{{ url_for('goals') }}" class="sidebar-link">
+<span class="sidebar-icon">🎯</span>
+<span class="sidebar-text">Daily Goals</span>
+</a>
+
+<a href="{{ url_for('tips') }}" class="sidebar-link">
+<span class="sidebar-icon">🌿</span>
+<span class="sidebar-text">Health Tips</span>
+</a>
+
+<a href="{{ url_for('emergency_contacts') }}" class="sidebar-link">
+<span class="sidebar-icon">👨‍👩‍👧‍👦</span>
+<span class="sidebar-text">Emergency Contacts</span>
+</a>
+
+</nav>
+</div>
+
+<div class="sidebar-bottom-actions">
+
+<button type="button"
+class="sidebar-btn sidebar-emergency"
+onclick="openSosModal()">
+🚨 Emergency Alert
+</button>
+
+<a href="{{ url_for('logout') }}" class="sidebar-btn sidebar-logout">
+Logout
+</a>
+
+<a href="{{ url_for('delete') }}"
+class="sidebar-btn sidebar-delete"
+onclick="return confirm('Are you sure you want to permanently delete your account?')">
+Delete Account
+</a>
+
+</div>
+
+</aside>
+
+
+<!-- Main Content -->
+<main class="dashboard-main">
+
+<section class="dashboard-v2-top">
+
+<div class="dashboard-v2-welcome">
+<div class="brand-badge">Welcome Back</div>
+
+<h1>{{ user.name }} 👋</h1>
+
+<p>
+Manage your health smarter with BMI tracking, AI symptom analysis,
+report understanding, goals, wellness guidance, and emergency support.
+</p>
+
+</div>
+
+<div class="dashboard-v2-reward">
+<span>Current Reward</span>
+<strong>{{ reward }}</strong>
+<small>Completed Goals: {{ completed_count }}/{{ total_count }}</small>
+</div>
+
+</section>
+
+
+<!-- SOS CARD -->
+<!-- QUICK EMERGENCY CALLS -->
+<!-- QUICK EMERGENCY CALLS -->
+<section class="quick-emergency-section">
+    <div class="quick-emergency-card">
+        <h3>Quick Emergency Calls</h3>
+
+        <div class="quick-call-buttons">
+
+            <!-- Call Ambulance -->
+            <a href="tel:108" class="quick-call-btn ambulance">
+                🚑 Call Ambulance
+            </a>
+
+            <!-- Find Nearby Ambulance -->
+            <a href="https://www.google.com/maps/search/ambulance+near+me" target="_blank" class="quick-call-btn ambulance">
+                📍 Find Nearby Ambulance
+            </a>
+            <a href="https://www.google.com/maps/search/hospital+near+me" target="_blank" class="quick-call-btn ambulance">
+                 🏥 Find Nearby Hospitals
+            </a>
+
+
+        </div>
+    </div>
+</section>
+
+
+<section class="dashboard-v2-cards">
+
+<div class="v2-card v2-card-large">
+
+<div class="v2-card-head">
+<h3>Profile Overview</h3>
+</div>
+
+<div class="v2-profile-box">
+
+<div class="v2-profile-item">
+<span>Name</span>
+<strong>{{ user.name }}</strong>
+</div>
+
+<div class="v2-profile-item">
+<span>Age</span>
+<strong>{{ user.age if user.age else '--' }}</strong>
+</div>
+
+<div class="v2-profile-item">
+<span>Weight</span>
+<strong>{{ user.weight if user.weight else '--' }}</strong>
+</div>
+
+<div class="v2-profile-item">
+<span>Height</span>
+<strong>{{ user.height if user.height else '--' }}</strong>
+</div>
+
+<div class="v2-profile-item">
+<span>Gender</span>
+<strong>{{ user.gender if user.gender else '--' }}</strong>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="v2-card">
+
+<div class="v2-card-head">
+<h3>Activity Tracker</h3>
+</div>
+
+<div class="activity-list">
+
+<div class="activity-item">
+<span>🎯 Goals Progress</span>
+<strong>{{ completed_count }}/{{ total_count }}</strong>
+</div>
+
+<div class="activity-item">
+<span>🏆 Current Reward</span>
+<strong>{{ reward }}</strong>
+</div>
+
+<div class="activity-item">
+<span>📊 BMI Status</span>
+<strong>
+{% if user.bmi %}
+Saved
+{% else %}
+Not Added
+{% endif %}
+</strong>
+</div>
+
+<div class="activity-item">
+<span>🚨 Emergency Contacts</span>
+<strong>{{ emergency_contacts|length if emergency_contacts else 0 }}</strong>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+</div>
+
+
+<!-- SOS MODAL -->
+<div id="sosModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+
+<div style="background:white; padding:25px; border-radius:10px; width:350px; text-align:center;">
+
+<h2>🚨 Emergency Alert</h2>
+
+<p>This will notify all your emergency contacts.</p>
+
+<textarea
+id="emergencyMessage"
+placeholder="Optional emergency message"
+style="width:100%; height:80px;"></textarea>
+
+<br><br>
+
+<button onclick="closeSosModal()">Cancel</button>
+
+<button onclick="triggerEmergencyAlert()" style="background:red;color:white;">
+Send SOS
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- SOS OVERLAY -->
+<div id="sosOverlay" class="sos-overlay">
+    <div class="sos-overlay-content">
+        <div class="sos-ring-wrap">
+            <div class="sos-ring ring-one"></div>
+            <div class="sos-ring ring-two"></div>
+            <div class="sos-ring ring-three"></div>
+            <div class="sos-pulse">🚨</div>
+        </div>
+
+        <div class="sos-status-badge">Emergency Alert Active</div>
+
+        <h1>SOS ALERT SENT</h1>
+        <p>Your emergency contacts have been notified.</p>
+
+        <div class="sos-countdown-box">
+            Alarm stopping in <span id="sosCountdown">10</span> sec
+        </div>
+
+        <button class="sos-stop-btn" onclick="stopSosAlert()">
+            Stop Alarm
+        </button>
+    </div>
+</div>
+
+<audio id="sirenAudio" preload="auto" loop>
+    <source src="{{ url_for('static', filename='siren.mp3') }}" type="audio/mpeg">
+</audio>
+
+<script>
+
+function openSosModal(){
+document.getElementById("sosModal").style.display="flex";
+}
+
+function closeSosModal(){
+document.getElementById("sosModal").style.display="none";
+}
+
+function triggerEmergencyAlert() {
+
+const message = document.getElementById("emergencyMessage").value;
+
+if (navigator.geolocation) {
+
+navigator.geolocation.getCurrentPosition(function(position) {
+
+const latitude = position.coords.latitude;
+const longitude = position.coords.longitude;
+
+const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+sendEmergency(message, locationLink);
+
+}, function(error) {
+
+console.log("Location error:", error);
+sendEmergency(message, "");
+
+});
+
+} else {
+sendEmergency(message, "");
+}
+
+}
+
+function sendEmergency(message, locationLink) {
+
+fetch("{{ url_for('send_emergency_alert') }}", {
+method: "POST",
+headers: {
+"Content-Type": "application/x-www-form-urlencoded"
+},
+body: new URLSearchParams({
+emergency_message: message,
+location_link: locationLink
+})
+})
+.then(response => response.json())
+.then(data => {
+
+if (data.success) {
+closeSosModal();
+showSosOverlay();
+} else {
+alert(data.message || "Emergency alert failed");
+}
+
+})
+.catch(error => {
+console.error(error);
+alert("Emergency alert failed");
+});
+
+}
+
+function showSosOverlay() {
+
+const overlay = document.getElementById("sosOverlay");
+const siren = document.getElementById("sirenAudio");
+const countdownEl = document.getElementById("sosCountdown");
+
+overlay.style.display = "flex";
+
+siren.play().catch(error => {
+console.log("Audio play error:", error);
+});
+
+let seconds = 10;
+countdownEl.textContent = seconds;
+
+const timer = setInterval(() => {
+
+seconds -= 1;
+countdownEl.textContent = seconds;
+
+if (seconds <= 0) {
+clearInterval(timer);
+stopSosAlert();
+}
+
+}, 1000);
+
+}
+
+function stopSosAlert(){
+
+const overlay = document.getElementById("sosOverlay");
+const siren = document.getElementById("sirenAudio");
+
+overlay.style.display = "none";
+
+siren.pause();
+siren.currentTime = 0;
+
+}
+
+</script>
+</body>
+</html>

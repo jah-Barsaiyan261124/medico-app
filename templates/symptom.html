@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Symptom Checker - Medico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="symptom-page">
+
+<div class="symptom-shell">
+
+    <div class="symptom-header">
+        <div>
+            <h1>Medico AI Symptom Checker</h1>
+            <p>Chat with Medico about your symptoms</p>
+        </div>
+
+        <div class="symptom-header-actions">
+            <a href="{{ url_for('clear_symptom_chat') }}" class="symptom-top-btn clear-btn">Clear Chat</a>
+            <a href="{{ url_for('dashboard') }}" class="symptom-top-btn back-btn">Back</a>
+        </div>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+        {% for chat in chat_history %}
+            {% if chat.sender == "ai" %}
+                <div class="chat-row ai-row">
+                    <div class="chat-label">Medico AI</div>
+
+                    <div class="ai-message-wrapper">
+                        <div class="chat-bubble ai-bubble" data-lang="{{ chat.language if chat.language else 'English' }}">
+                            {{ chat.message }}
+                        </div>
+
+                        <div class="tts-actions">
+                            <button type="button" class="tts-btn speak-btn" onclick="speakText(this)">🔊 Listen</button>
+                            <button type="button" class="tts-btn stop-btn" onclick="stopSpeech()">⏹ Stop</button>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="chat-row user-row">
+                    <div class="chat-label user-label">You</div>
+                    <div class="chat-bubble user-bubble">{{ chat.message }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <form method="POST" class="chat-input-wrapper">
+        <select name="language" id="languageSelect" class="language-select">
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Hinglish">Hinglish</option>
+        </select>
+
+        <div class="voice-input-group">
+            <input
+                type="text"
+                id="symptomInput"
+                name="symptoms"
+                placeholder="Describe your symptoms here..."
+                required
+            >
+
+            <button type="button" id="micBtn" class="mic-btn" title="Speak symptoms">
+                🎤
+            </button>
+
+            <button type="submit" class="send-btn">➤</button>
+        </div>
+    </form>
+
+</div>
+
+<script>
+let currentAudio = null;
+
+function speakText(button) {
+    const wrapper = button.closest(".ai-message-wrapper");
+    const bubble = wrapper.querySelector(".ai-bubble");
+
+    const text = bubble.innerText.trim();
+    const language = bubble.dataset.lang || "English";
+
+    fetch("/speak-symptom", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            text: text,
+            language: language
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
+            currentAudio = new Audio(data.audio_url);
+            currentAudio.play().catch(error => {
+                console.error("Audio play error:", error);
+                alert("Audio play failed.");
+            });
+        } else {
+            alert(data.message || "Speech failed");
+        }
+    })
+    .catch(error => {
+        console.error("Speak error:", error);
+        alert("Something went wrong while generating speech.");
+    });
+}
+
+function stopSpeech() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+}
+
+// =========================
+// MIC INPUT FEATURE
+// =========================
+const micBtn = document.getElementById("micBtn");
+const symptomInput = document.getElementById("symptomInput");
+const languageSelect = document.getElementById("languageSelect");
+
+let recognition = null;
+let isListening = false;
+
+function getRecognitionLanguage() {
+    const selectedLanguage = languageSelect.value;
+
+    if (selectedLanguage === "Hindi") {
+        return "hi-IN";
+    } else if (selectedLanguage === "Hinglish") {
+        return "hi-IN";
+    } else {
+        return "en-IN";
+    }
+}
+
+if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = function () {
+        isListening = true;
+        micBtn.classList.add("listening");
+        micBtn.innerText = "🎙";
+        micBtn.title = "Listening...";
+    };
+
+    recognition.onend = function () {
+        isListening = false;
+        micBtn.classList.remove("listening");
+        micBtn.innerText = "🎤";
+        micBtn.title = "Speak symptoms";
+    };
+
+    recognition.onresult = function (event) {
+        const transcript = event.results[0][0].transcript;
+
+        if (symptomInput.value.trim() !== "") {
+            symptomInput.value = symptomInput.value + " " + transcript;
+        } else {
+            symptomInput.value = transcript;
+        }
+    };
+
+    recognition.onerror = function (event) {
+        console.error("Speech recognition error:", event.error);
+        alert("Mic input failed: " + event.error);
+    };
+
+    micBtn.addEventListener("click", function () {
+        if (!recognition) return;
+
+        if (isListening) {
+            recognition.stop();
+            return;
+        }
+
+        recognition.lang = getRecognitionLanguage();
+        recognition.start();
+    });
+} else {
+    micBtn.addEventListener("click", function () {
+        alert("Speech recognition is not supported in this browser. Please use Google Chrome.");
+    });
+}
+</script>
+
+</body>
+</html>

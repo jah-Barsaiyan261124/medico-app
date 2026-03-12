@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sent - Medico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="landing-page">
+
+<div class="email-sent-wrapper">
+    <div class="email-sent-card">
+        <div class="email-check-icon">✅</div>
+        <h1>Email Sent!</h1>
+        <p class="email-subtitle">Check your Gmail inbox for confirmation</p>
+
+        <div class="email-info-box">
+            <p>A confirmation email has been sent to</p>
+            <h3>{{ email }}</h3>
+        </div>
+
+        <a href="{{ url_for('login') }}" class="email-back-btn">Go to Login</a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Dashboard - Medico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bmi-dashboard-page">
+
+<div class="bmi-shell">
+
+    <div class="bmi-top-banner">
+        <div>
+            <div class="brand-badge">Medico BMI</div>
+            <h1>Your BMI Dashboard</h1>
+            <p>Track your body mass index, update your profile, and monitor your health status.</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="bmi-back-btn">← Back to Dashboard</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="bmi-flash-box">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="bmi-main-grid">
+
+        <div class="bmi-summary-card">
+            <div class="bmi-card-head">
+                <h2>Saved BMI</h2>
+                <span>Health</span>
+            </div>
+
+            {% if user.bmi %}
+                <div class="bmi-big-number">{{ user.bmi }}</div>
+                <div class="bmi-status-pill">{{ bmi_category }}</div>
+
+                <div class="bmi-info-list">
+                    <div class="bmi-info-row">
+                        <span>Name</span>
+                        <strong>{{ user.name }}</strong>
+                    </div>
+                    <div class="bmi-info-row">
+                        <span>Age</span>
+                        <strong>{{ user.age }}</strong>
+                    </div>
+                    <div class="bmi-info-row">
+                        <span>Gender</span>
+                        <strong>{{ user.gender }}</strong>
+                    </div>
+                    <div class="bmi-info-row">
+                        <span>Weight</span>
+                        <strong>{{ user.weight }} kg</strong>
+                    </div>
+                    <div class="bmi-info-row">
+                        <span>Height</span>
+                        <strong>{{ user.height }} cm</strong>
+                    </div>
+                </div>
+            {% else %}
+                <div class="bmi-empty-state">
+                    <div class="bmi-empty-icon">📊</div>
+                    <h3>No BMI Saved Yet</h3>
+                    <p>Fill the form to calculate and save your BMI.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="bmi-form-card">
+            <div class="bmi-card-head">
+                <h2>Update BMI Form</h2>
+                <span>Profile</span>
+            </div>
+
+            <form method="POST">
+                <label>Full Name</label>
+                <input type="text" value="{{ user.name }}" readonly>
+
+                <div class="two-col">
+                    <div>
+                        <label>Age</label>
+                        <input type="number" name="age" value="{{ user.age if user.age else '' }}" placeholder="Enter age" required>
+                    </div>
+
+                    <div>
+                        <label>Gender</label>
+                        <select name="gender" required>
+                            <option value="">Select</option>
+                            <option value="Male" {% if user.gender == "Male" %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if user.gender == "Female" %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if user.gender == "Other" %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="two-col">
+                    <div>
+                        <label>Weight (kg)</label>
+                        <input type="number" step="0.1" name="weight" value="{{ user.weight if user.weight else '' }}" placeholder="Enter weight" required>
+                    </div>
+
+                    <div>
+                        <label>Height (cm)</label>
+                        <input type="number" step="0.1" name="height" value="{{ user.height if user.height else '' }}" placeholder="Enter height" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="complete-btn">Save Your BMI</button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

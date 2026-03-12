@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart AI Doctor Mode - Medico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="report-page">
+
+<div class="report-shell">
+
+    <div class="report-hero">
+        <div class="report-hero-left">
+            <div class="report-badge">Medico AI</div>
+            <h1>Medico AI Report Analysis</h1>
+            <p>
+                Upload your medical report and get an easy explanation with
+                possible health risk, diet advice, exercise suggestions, yoga guidance,
+                and safe next steps.
+            </p>
+
+            <div class="report-feature-grid">
+                <div class="report-feature-box">
+                    <span>📋</span>
+                    <p>Simple report summary</p>
+                </div>
+                <div class="report-feature-box">
+                    <span>🥗</span>
+                    <p>Diet suggestions</p>
+                </div>
+                <div class="report-feature-box">
+                    <span>🧘</span>
+                    <p>Yoga & exercise ideas</p>
+                </div>
+                <div class="report-feature-box">
+                    <span>🩺</span>
+                    <p>Doctor consultation guidance</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="report-hero-right">
+            <div class="report-icon-card">
+                <div class="report-main-icon">🩻</div>
+                <h3>AI Report Analysis</h3>
+                <p>Understand your report in English, Hindi, or Hinglish.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-main-grid">
+
+        <div class="report-upload-card">
+            <div class="report-section-head">
+                <h2>Upload Report</h2>
+                <span>Step 1</span>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="report-alert-box">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data" class="report-form">
+                <label>Which language are you comfortable with?</label>
+                <select name="language" required>
+                    <option value="English" {% if selected_language == "English" %}selected{% endif %}>English</option>
+                    <option value="Hindi" {% if selected_language == "Hindi" %}selected{% endif %}>Hindi</option>
+                    <option value="Hinglish" {% if selected_language == "Hinglish" %}selected{% endif %}>Hinglish</option>
+                </select>
+
+                <label style="margin-top:18px;">Upload Report Image</label>
+                <input type="file" name="report_image" accept=".png,.jpg,.jpeg,.webp" required>
+
+                <button type="submit" class="report-submit-btn">Analyze with AI Doctor</button>
+            </form>
+
+            {% if uploaded_filename %}
+                <div class="uploaded-file-box">
+                    <span>📎 Uploaded file</span>
+                    <strong>{{ uploaded_filename }}</strong>
+                </div>
+            {% endif %}
+
+            <a href="{{ url_for('dashboard') }}" class="report-back-btn">← Back to Dashboard</a>
+        </div>
+
+        <div class="report-result-card">
+            <div class="report-section-head">
+                <h2>AI Analysis Result</h2>
+                <span>Step 2</span>
+            </div>
+
+            {% if result %}
+                <div class="report-result-box">{{ result }}</div>
+            {% else %}
+                <div class="report-empty-state">
+                    <div class="report-empty-icon">🤖</div>
+                    <h3>No report analyzed yet</h3>
+                    <p>
+                        Upload your medical report and Medico AI will explain it in a
+                        simple and user-friendly way.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
